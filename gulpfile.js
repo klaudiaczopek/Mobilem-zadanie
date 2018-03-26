@@ -12,6 +12,7 @@ var htmlReaplce = require('gulp-html-replace');
 var htmlMin = require('gulp-htmlmin');
 var del = require('del');
 var sequence = require('run-sequence');
+var pug = require('gulp-pug');
 
 var config = {
   dist: 'dist/',
@@ -29,7 +30,9 @@ var config = {
   cssoutname: 'style.css',
   jsoutname: 'script.js',
   cssreplaceout: 'css/style.css',
-  jsreplaceout: 'js/script.js'
+  jsreplaceout: 'js/script.js',
+  pugin: 'src/pug/*.pug',
+  pugout: 'src/'
 };
 
 gulp.task('reload', function() {
@@ -92,12 +95,18 @@ gulp.task('html', function() {
     .pipe(gulp.dest(config.dist))
 });
 
+gulp.task('pug', function () {
+    return gulp.src(config.pugin)
+        .pipe(pug({pretty: true}))
+        .pipe(gulp.dest(config.pugout))
+});
+
 gulp.task('clean', function() {
   return del([config.dist]);
 });
 
 gulp.task('build', function() {
-  sequence('clean', ['html', 'js', 'css', 'img']);
+  sequence('clean', ['pug','html', 'js','sass', 'css', 'img']);
 });
 
 gulp.task('default', ['serve']);
